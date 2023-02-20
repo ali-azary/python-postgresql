@@ -1,7 +1,7 @@
 # SOH-from-EIS
 State of Health of Li-ion batteries from Electrochemical Impedance Spectroscopy
 the data taken from https://prod-dcd-datasets-cache-zipfiles.s3.eu-west-1.amazonaws.com/wykht8y7tg-1.zip
-first data is converted and cleaned into properly-formatted csv files.
+first data is converted and cleaned into properly-formatted csv files. I also added it into a postgre SQL database using a python script. 
 All the EIS data are combined into one file and used with GPR ML model to predict SoH with SoH, impedance, frenquency, and temperature data at hand. SoH values are calulated using nominal capacity and current Ah values.
 
 ![impedance_soh](https://user-images.githubusercontent.com/69943289/220211707-5efa3aa7-4b40-4761-ac46-2bb4932c3717.jpg)
