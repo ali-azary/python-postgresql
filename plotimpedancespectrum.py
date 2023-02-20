@@ -1,41 +1,27 @@
-import csv
-
-# Open the CSV file
-with open(r"G:\My Drive\data analysis\data analysis projects\New folder\Panasonic 18650PF Data\Panasonic 18650PF Data\25degC\EIS\3541_EIS00014.csv") as csvfile:
-    reader = csv.reader(csvfile)
-
-    # Find the row that contains "Zreal1" and "Zimg1"
-    for row in reader:
-        if "Zreal1" in row and "Zimg1" in row:
-            # Get the indices of the cells containing "Zreal1" and "Zimg1"
-            real_index = row.index("Zreal1")
-            img_index = row.index("Zimg1")
-
-            # Create two empty lists to store the numbers under the cells
-            real_list = []
-            img_list = []
-
-            # Loop over the remaining rows and extract the numbers
-            for row in reader:
-                if row[real_index] and row[img_index]:
-                    try:
-                        real_list.append(float(row[real_index]))
-                        img_list.append(-1*float(row[img_index]))
-                    except:
-                        pass
-            # Print the two lists
-            
-
-            # Exit the loop since we've found what we were looking for
-            break
+import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 
-# Plot the two lists as a scatter plot
-plt.scatter(real_list, img_list)
+df = pd.read_csv('EIS.csv',index_col=0)
+CN=2.9
+df['SoH'] = pd.to_numeric((CN+df['AhAccu'])/CN*100,errors='coerce')
 
-# Set the x and y axis labels
-plt.xlabel("Real part")
-plt.ylabel("Imaginary part")
+# Group the data by SoH values
+groups = df.groupby(df['SoH'].round(0))
+for name, group in groups:
+    print(f'SoH: {name}, Rows: {len(group)}')
+# Define the SoH values of interest
+soh_values = [30, 50, 70, 90]
 
+# Loop over each SoH value and create a scatter plot for that group
+for soh in soh_values:
+    group = groups.get_group(soh)
+    plt.scatter(group['Zreal1'], -1*group['Zimg1'], label=soh)
+
+# Add labels and legend
+plt.xlabel('Zreal1')
+plt.ylabel('Zimg1')
+plt.legend(title='SoH', loc='center left', bbox_to_anchor=(1, 0.5))
+plt.tight_layout()
 # Show the plot
-plt.show()
+plt.savefig('impedance_soh.jpg')
